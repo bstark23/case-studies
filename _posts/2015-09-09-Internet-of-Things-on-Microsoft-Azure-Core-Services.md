@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Simple IoT Data Injestion using Microsoft Azure Core Services
+title: Internet of Things on Microsoft Azure Core Services
 author: Ben Hanson
 author-link: http://benjaminstarkhanson.com
 date: 2015-09-09 02:26:11
