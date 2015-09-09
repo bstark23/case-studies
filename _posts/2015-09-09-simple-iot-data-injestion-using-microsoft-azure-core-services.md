@@ -45,7 +45,7 @@ The back-end processing model is going to be basically:
 Implementation
 --------------
 
-##Data Ingestion
+###Data Ingestion
 
 For ingesting the data samples from the device Azure Storage Tables can be a very efficient and cost effective way to store huge sets of data – it’s also been around for a while, is very simple, secure, reliable and can be called from virtually every major programming language.
 
@@ -96,7 +96,7 @@ Your partition table schema is then going to look something like this:
 
 Now to process all this data.
 
-##Data Processing
+###Data Processing
 
 For processing all of this data in real-time we’re going to need:
 
@@ -107,7 +107,7 @@ For processing all of this data in real-time we’re going to need:
 
 All of this can be done with just a handful lines of code in an extremely simplistic, efficient and scalable manner.
 
-##Cloud Service
+###Cloud Service
 
 The cloud service is going to be a very basic infinite loop that looks something like the following – note: ExtraSmall instances should be completely fine for this, which are ridiculously cheap:
 
@@ -117,7 +117,7 @@ The cloud service is going to be a very basic infinite loop that looks something
 
 Note: for reliability in the following section about the individual jobs, each job should have a property of the last value it processed and be able to start with that value when processing in the event it is set.  Also, during execution, after each element is executed that property value should be updated and the message’s visibility timeout should be updated to extend it long enough to process the next element.  This ensures that no action is done twice and if something happens with the cloud service instance, such as it rebooting or failing to respond, another instance will pick up where the previous one left off after the timeout period expires.
 
-##Master Job
+###Master Job
 
 The Master Job is similarly simple:
 
@@ -125,13 +125,13 @@ The Master Job is similarly simple:
 2. Add a per-time period job to the queue
 3. Remove yourself from the queue
 
-##Per-Time Period Job
+###Per-Time Period Job
 
 1. Query by partition key of the time-period specified in the job’s message
 2. Add a per-device job to the queue with a properties specifying the deviceId and the last row key that was read
 3 .Remove yourself from the queue
 
-##Per-Device Job
+###Per-Device Job
 
 1. Query the sensor table by partitionkey=deviceId and rowkey>lastreadrowkey (both values are contained in the message)
 2. Perform whatever processing you want on the data, some examples:
@@ -140,7 +140,7 @@ The Master Job is similarly simple:
 	* you may want to continuously append to a blob for longer, Hadoop-esque big data analytics and/or machine learning (Note I have a pending post on appending to blob storage efficiently – the azure storage team also has announced that they’ll have a method for doing that in the Q3 release of their SDK)
 3. et cetera and so on for whatever sensor data you’re collecting.
 
-##Putting it all together
+###Putting it all together
 
 Finally you’re going to want to add the master job to Scheduler and set it to run at whatever rate you wish to process the data from the deployed devices.  You’re then going to want to configure and tune the auto scaling rules on the cloud service such that as new devices are deployed performance for processing all of them stays constant.
 
